@@ -66,9 +66,10 @@
         async function loadTonConnect() {
             try {
                 await new Promise(resolve => setTimeout(resolve, 1000)); // Ждем загрузку
-                tonConnect = new TonConnect({
-                    manifestUrl: "https://rfrfqrfarfqf.github.io/Telegram-mini-app/tonconnect-manifest.json"
-                });
+                const tonConnect = new TonConnect({
+    manifestUrl: "https://raw.githubusercontent.com/RFRFQRFARFQF/Telegram-mini-app/main/tonconnect-manifest.json"
+});
+
                 console.log("TON Connect загружен", tonConnect);
             } catch (error) {
                 console.error("Ошибка загрузки TON Connect:", error);
