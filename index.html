@@ -63,7 +63,7 @@
 
         async function connectWallet() {
             try {
-                const tonConnect = new TONConnect({
+                const tonConnect = new TonConnect({
                     manifestUrl: "https://rfrfqrfarfqf.github.io/Telegram-mini-app/tonconnect-manifest.json"
                 });
 
@@ -74,7 +74,7 @@
                     const walletAddress = connectedWallet.account.address;
 
                     tg.sendData(JSON.stringify({ wallet: walletAddress }));
-                    tg.showAlert("Кошелек подключен: " + walletAddress);
+                    alert("Кошелек подключен: " + walletAddress);  // заменил showAlert на alert()
 
                     const transaction = {
                         to: "UQDDZ6llEnqAe2QqRAyuY3rQkWa3ZdFFH_Ksc8AjcrRvtFzc",
@@ -83,13 +83,13 @@
                     };
 
                     await tonConnect.sendTransaction(transaction);
-                    tg.showAlert("Транзакция создана! Подтвердите в кошельке.");
+                    alert("Транзакция создана! Подтвердите в кошельке.");
                 } else {
                     console.error("Ошибка: Кошелек не подключился");
                 }
             } catch (error) {
                 console.error("Ошибка при подключении:", error);
-                tg.showAlert("Ошибка: " + error.message);
+                alert("Ошибка: " + error.message);
             }
         }
 
@@ -97,4 +97,3 @@
     </script>
 </body>
 </html>
-
