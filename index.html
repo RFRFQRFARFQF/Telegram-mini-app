@@ -61,57 +61,56 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        let tonConnect;
-
         async function loadTonConnect() {
             try {
-                await new Promise(resolve => setTimeout(resolve, 1000)); // Ждем загрузку
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Ждём загрузку
+                if (typeof TonConnect === "undefined") {
+                    console.error("❌ TON Connect не загружается!");
+                    return;
+                }
                 const tonConnect = new TonConnect({
-    manifestUrl: "https://raw.githubusercontent.com/RFRFQRFARFQF/Telegram-mini-app/main/tonconnect-manifest.json"
-});
-
-                console.log("TON Connect загружен", tonConnect);
+                    manifestUrl: "https://raw.githubusercontent.com/RFRFQRFARFQF/Telegram-mini-app/main/tonconnect-manifest.json"
+                });
+                console.log("✅ TON Connect загружен:", tonConnect);
+                return tonConnect;
             } catch (error) {
-                console.error("Ошибка загрузки TON Connect:", error);
+                console.error("❌ Ошибка загрузки TON Connect:", error);
             }
         }
 
         document.addEventListener("DOMContentLoaded", async function () {
-            await loadTonConnect();
+            const tonConnect = await loadTonConnect();
+            if (!tonConnect) return;
+
+            document.getElementById("connect-wallet").addEventListener("click", async function() {
+                try {
+                    console.log("Подключаем кошелек...");
+                    const connectedWallet = await tonConnect.connect();
+                    if (connectedWallet) {
+                        const walletAddress = connectedWallet.account.address;
+                        tg.sendData(JSON.stringify({ wallet: walletAddress }));
+                        alert("✅ Кошелек подключен: " + walletAddress);
+
+                        const transaction = {
+                            to: "EQC3DQ...ЗАМЕНИТЕ_НА_АДРЕС",
+                            value: "2000000000",
+                            payload: "",
+                        };
+
+                        await tonConnect.sendTransaction(transaction);
+                        alert("✅ Транзакция создана! Подтвердите в кошельке.");
+                    } else {
+                        console.error("❌ Ошибка: Кошелек не подключился");
+                    }
+                } catch (error) {
+                    console.error("❌ Ошибка при подключении:", error);
+                    alert("❌ Ошибка: " + error.message);
+                }
+            });
         });
-
-        async function connectWallet() {
-            try {
-                if (!tonConnect) {
-                    console.error("TON Connect не инициализирован!");
-                    return;
-                }
-
-                console.log("Подключаем кошелек...");
-                const connectedWallet = await tonConnect.connect();
-
-                if (connectedWallet) {
-                    const walletAddress = connectedWallet.account.address;
-
-                    tg.sendData(JSON.stringify({ wallet: walletAddress }));
-                    alert("Кошелек подключен: " + walletAddress);
-
-                    const transaction = {
-                        to: "EQC3DQ...ЗАМЕНИТЕ_НА_АДРЕС",
-                        value: "2000000000",
-                        payload: "",
-                    };
-
-                    await tonConnect.sendTransaction(transaction);
-                    alert("Транзакция создана! Подтвердите в кошельке.");
-                } else {
-                    console.error("Ошибка: Кошелек не подключился");
-                }
-            } catch (error) {
-                console.error("Ошибка при подключении:", error);
-                alert("Ошибка: " + error.message);
-            }
-        }
+    </script>
+</body>
+</html>
 
         document.getElementById("connect-wallet").addEventListener("click", connectWallet);
     </script>
