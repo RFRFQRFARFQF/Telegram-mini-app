@@ -1,5 +1,7 @@
 {
-    "url": "https://rfrfqrfarfqf.github.io/Telegram-mini-app",
-    "name": "FPIBank",
-    "iconUrl": "https://rfrfqrfarfqf.github.io/Telegram-mini-app/logo.png"
+  "url": "https://rfrfqrfarfqf.github.io/Telegram-mini-app/",
+  "name": "FPIBank Wallet",
+  "iconUrl": "https://rfrfqrfarfqf.github.io/Telegram-mini-app/logo.png",
+  "dappUrl": "https://rfrfqrfarfqf.github.io/Telegram-mini-app/",
+  "manifestVersion": "1.0"
 }
