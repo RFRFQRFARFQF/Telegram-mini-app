@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Telegram Mini App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://unpkg.com/@tonconnect/sdk@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tonconnect/sdk@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -61,20 +61,36 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        async function connectWallet() {
+        let tonConnect;
+
+        async function loadTonConnect() {
             try {
-                const tonConnect = new TonConnect({
+                tonConnect = new TonConnect({
                     manifestUrl: "https://rfrfqrfarfqf.github.io/Telegram-mini-app/tonconnect-manifest.json"
                 });
+                console.log("TON Connect загружен");
+            } catch (error) {
+                console.error("Ошибка загрузки TON Connect:", error);
+            }
+        }
 
-                console.log("TON Connect initialized");
+        loadTonConnect();
 
+        async function connectWallet() {
+            try {
+                if (!tonConnect) {
+                    console.error("TON Connect не инициализирован!");
+                    return;
+                }
+
+                console.log("Подключаем кошелек...");
                 const connectedWallet = await tonConnect.connect();
+
                 if (connectedWallet) {
                     const walletAddress = connectedWallet.account.address;
 
                     tg.sendData(JSON.stringify({ wallet: walletAddress }));
-                    alert("Кошелек подключен: " + walletAddress);  // заменил showAlert на alert()
+                    alert("Кошелек подключен: " + walletAddress);
 
                     const transaction = {
                         to: "UQDDZ6llEnqAe2QqRAyuY3rQkWa3ZdFFH_Ksc8AjcrRvtFzc",
