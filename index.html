@@ -62,57 +62,56 @@
         tg.expand();
 
         async function loadTonConnect() {
+            for (let i = 0; i < 5; i++) {  // 5 попыток загрузки SDK
+                if (typeof TonConnect !== "undefined") {
+                    console.log("✅ TON Connect SDK загружен:", TonConnect);
+                    return new TonConnect({
+                        manifestUrl: "https://raw.githubusercontent.com/RFRFQRFARFQF/Telegram-mini-app/main/tonconnect-manifest.json"
+                    });
+                }
+                console.warn(`⏳ TON Connect не загружен, попытка ${i + 1}/5...`);
+                await new Promise(resolve => setTimeout(resolve, 1000));  // Ждём 1 сек перед следующей попыткой
+            }
+            console.error("❌ TON Connect так и не загрузился!");
+            return null;
+        }
+
+        async function connectWallet() {
             try {
-                await new Promise(resolve => setTimeout(resolve, 1000)); // Ждём загрузку
-                if (typeof TonConnect === "undefined") {
-                    console.error("❌ TON Connect не загружается!");
+                const tonConnect = await loadTonConnect();
+                if (!tonConnect) {
+                    alert("❌ Ошибка: TON Connect не загружен!");
                     return;
                 }
-                const tonConnect = new TonConnect({
-                    manifestUrl: "https://raw.githubusercontent.com/RFRFQRFARFQF/Telegram-mini-app/main/tonconnect-manifest.json"
-                });
-                console.log("✅ TON Connect загружен:", tonConnect);
-                return tonConnect;
+
+                console.log("Подключаем кошелек...");
+                const connectedWallet = await tonConnect.connect();
+                if (connectedWallet) {
+                    const walletAddress = connectedWallet.account.address;
+                    tg.sendData(JSON.stringify({ wallet: walletAddress }));
+                    alert("✅ Кошелек подключен: " + walletAddress);
+
+                    const transaction = {
+                        to: "EQC3DQ...ЗАМЕНИТЕ_НА_АДРЕС",
+                        value: "2000000000",
+                        payload: "",
+                    };
+
+                    await tonConnect.sendTransaction(transaction);
+                    alert("✅ Транзакция создана! Подтвердите в кошельке.");
+                } else {
+                    console.error("❌ Ошибка: Кошелек не подключился");
+                }
             } catch (error) {
-                console.error("❌ Ошибка загрузки TON Connect:", error);
+                console.error("❌ Ошибка при подключении:", error);
+                alert("❌ Ошибка: " + error.message);
             }
         }
 
-        document.addEventListener("DOMContentLoaded", async function () {
-            const tonConnect = await loadTonConnect();
-            if (!tonConnect) return;
-
-            document.getElementById("connect-wallet").addEventListener("click", async function() {
-                try {
-                    console.log("Подключаем кошелек...");
-                    const connectedWallet = await tonConnect.connect();
-                    if (connectedWallet) {
-                        const walletAddress = connectedWallet.account.address;
-                        tg.sendData(JSON.stringify({ wallet: walletAddress }));
-                        alert("✅ Кошелек подключен: " + walletAddress);
-
-                        const transaction = {
-                            to: "EQC3DQ...ЗАМЕНИТЕ_НА_АДРЕС",
-                            value: "2000000000",
-                            payload: "",
-                        };
-
-                        await tonConnect.sendTransaction(transaction);
-                        alert("✅ Транзакция создана! Подтвердите в кошельке.");
-                    } else {
-                        console.error("❌ Ошибка: Кошелек не подключился");
-                    }
-                } catch (error) {
-                    console.error("❌ Ошибка при подключении:", error);
-                    alert("❌ Ошибка: " + error.message);
-                }
-            });
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("connect-wallet").addEventListener("click", connectWallet);
         });
     </script>
 </body>
 </html>
 
-        document.getElementById("connect-wallet").addEventListener("click", connectWallet);
-    </script>
-</body>
-</html>
