@@ -61,27 +61,35 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        async function loadTonConnect() {
-            for (let i = 0; i < 5; i++) {  // 5 попыток загрузки SDK
-                if (typeof TonConnect !== "undefined") {
-                    console.log("✅ TON Connect SDK загружен:", TonConnect);
-                    return new TonConnect({
-                        manifestUrl: "https://raw.githubusercontent.com/RFRFQRFARFQF/Telegram-mini-app/main/tonconnect-manifest.json"
-                    });
-                }
-                console.warn(`⏳ TON Connect не загружен, попытка ${i + 1}/5...`);
-                await new Promise(resolve => setTimeout(resolve, 1000));  // Ждём 1 сек перед следующей попыткой
-            }
-            console.error("❌ TON Connect так и не загрузился!");
-            return null;
+       <script>
+    async function loadTonConnectSDK() {
+        try {
+            console.log("⏳ Загружаем TON Connect SDK...");
+            const response = await fetch("https://raw.githubusercontent.com/RFRFQRFARFQF/Telegram-mini-app/main/tonconnect-sdk.min.js");
+            if (!response.ok) throw new Error("Ошибка загрузки SDK: " + response.status);
+            const scriptText = await response.text();
+            eval(scriptText); // Принудительно выполняем код SDK
+            console.log("✅ TON Connect SDK загружен!");
+        } catch (error) {
+            console.error("❌ Ошибка загрузки TON Connect SDK:", error);
         }
+    }
 
-        async function connectWallet() {
-            try {
-                const tonConnect = await loadTonConnect();
-                if (!tonConnect) {
-                    alert("❌ Ошибка: TON Connect не загружен!");
-                    return;
+    async function initTonConnect() {
+        await loadTonConnectSDK();
+        if (typeof window.TonConnect !== "undefined") {
+            console.log("✅ FINALLY: TON Connect загружен!", window.TonConnect);
+            return new window.TonConnect({
+                manifestUrl: "https://raw.githubusercontent.com/RFRFQRFARFQF/Telegram-mini-app/main/tonconnect-manifest.json"
+            });
+        }
+        console.error("❌ TON Connect НЕ загружен после всех попыток!");
+        return null;
+    }
+
+    initTonConnect();
+</script>
+
                 }
 
                 console.log("Подключаем кошелек...");
